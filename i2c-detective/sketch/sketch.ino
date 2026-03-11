@@ -195,7 +195,7 @@ void strongIdentify(uint8_t addr) {
 
   if ((addr >= 0x18 && addr <= 0x1F)) {
     bool gotManuf = readReg16BE(addr, 0x06, v16be);
-    bool gotDevLE  = readReg16LE(addr, 0x07, v16le);
+    bool gotDevLE = readReg16LE(addr, 0x07, v16le);
 
     if (gotManuf && gotDevLE) {
       if (v16be == 0x0054 && (v16le & 0xFF00) == 0x0400) {
@@ -396,11 +396,14 @@ void analyzeDevice(uint8_t addr) {
   dumpBlock8(addr, 0x00, 0x1F);
 }
 
-void scanBus() {
+void scanBusOnce() {
   int found = 0;
 
   Monitor.println();
-  Monitor.println("=== I2C Detective V3 ===");
+  Monitor.println("=== I2C Detective V3 - One Shot ===");
+  Monitor.println("Waiting 10 seconds before scan...");
+  delay(10000);
+  Monitor.println("Starting scan...");
 
   for (uint8_t addr = 1; addr < 127; addr++) {
     if (pingAddress(addr)) {
@@ -412,7 +415,8 @@ void scanBus() {
   Monitor.println();
   Monitor.print("Total devices found: ");
   Monitor.println(found);
-  Monitor.println("Rescan in 15 seconds");
+  Monitor.println("One-shot scan complete.");
+  Monitor.println("Program now idle.");
   Monitor.println();
 }
 
@@ -420,10 +424,11 @@ void setup() {
   Wire.begin();
   Monitor.begin();
   delay(1000);
-  scanBus();
+  scanBusOnce();
 }
 
 void loop() {
-  delay(15000);
-  scanBus();
+  while (true) {
+    delay(1000);
+  }
 }
