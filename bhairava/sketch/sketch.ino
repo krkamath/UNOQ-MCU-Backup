@@ -19,7 +19,7 @@ Si5351 si5351;
 Adafruit_SSD1306 oled(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 // --- Variables (Volatile for ISR safety) ---
-volatile long rf_freq_hz = 7100000UL;
+volatile long rf_freq_hz = 7150000UL;
 const long IF_FREQ = 9000000UL;
 volatile bool update_needed = false;
 volatile int lastEncoded = 0;
@@ -27,17 +27,20 @@ volatile int pulseCounter = 0;
 
 void setup() 
 {
-  // High baud rate is essential for smooth Plotter lines
   Serial.begin(115200);
 
   pinMode(ENC_CLK, INPUT_PULLUP);
   pinMode(ENC_DT, INPUT_PULLUP);
   pinMode(BUTTON_PIN, INPUT_PULLUP);
 
-  if (!si5351.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0)) 
-  {
-    Serial.println("Si5351 sync failed!");
+  // --- Si5351 init (one time) ---
+  bool ok = si5351.init(SI5351_CRYSTAL_LOAD_8PF, 0, 0);
+  if (!ok) {
+    Serial.println("Si5351 not found – check I2C wiring.");
+    while (1) { delay(1000); }
   }
+  si5351.drive_strength(SI5351_CLK0, SI5351_DRIVE_2MA);  // lowest level, safer for VNA
+  si5351.output_enable(SI5351_CLK0, 1);
 
   update_hardware();
 
@@ -68,7 +71,8 @@ void loop()
 void handle_button() 
 {
   if (digitalRead(BUTTON_PIN) == LOW) 
-  { rf_freq_hz = 7150000UL;
+  { 
+    rf_freq_hz = 7150000UL;
     update_needed = true;
   }
 }
@@ -106,7 +110,7 @@ void update_display()
   oled.clearDisplay();
   oled.setTextColor(SSD1306_WHITE);
   oled.setTextSize(2);
-  oled.setCursor(0, 05);
+  oled.setCursor(0, 5);
   oled.print(rf_freq_hz / 1000000.0, 3);
   oled.print(" MHz");
   oled.display();
