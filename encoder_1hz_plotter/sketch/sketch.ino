@@ -30,6 +30,8 @@ volatile int pulseCounter = 0;
 unsigned long lastDisplayUpdate = 0;
 const int displayRefreshRate = 100;
 
+
+
 void setup() {
   // High baud rate is essential for smooth Plotter lines
   Monitor.begin(115200);

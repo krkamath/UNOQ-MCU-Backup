@@ -25,6 +25,8 @@ volatile bool update_needed = false;
 volatile int lastEncoded = 0;
 volatile int pulseCounter = 0;  
 
+
+
 void setup() 
 {
   Serial.begin(115200);
@@ -77,27 +79,27 @@ void handle_button()
   }
 }
 
-void handle_encoder() 
+void handle_encoder()
 {
-  int MSB = digitalRead(ENC_CLK);
-  int LSB = digitalRead(ENC_DT);
-  int encoded = (MSB << 1) | LSB;
-  int sum = (lastEncoded << 2) | encoded;
+int MSB = digitalRead(ENC_CLK);
+int LSB = digitalRead(ENC_DT);
+int encoded = (MSB << 1) | LSB;
+int sum = (lastEncoded << 2) | encoded;
 
-  if (sum == 0b1101 || sum == 0b0100 || sum == 0b0010 || sum == 0b1011) pulseCounter++;
-  else if (sum == 0b1110 || sum == 0b1000 || sum == 0b0001 || sum == 0b0111) pulseCounter--;
+if (sum == 0b1101 || sum == 0b0100 || sum == 0b0010 || sum == 0b1011) pulseCounter++;
+else if (sum == 0b1110 || sum == 0b1000 || sum == 0b0001 || sum == 0b0111) pulseCounter--;
 
-  if (abs(pulseCounter) >= 4) 
-  {
-    if (pulseCounter > 0) rf_freq_hz += 1000L;
-    else rf_freq_hz -= 1000L;
-    
-    rf_freq_hz = constrain(rf_freq_hz, 7000000L, 7300000L);
-    pulseCounter = 0;
-    update_needed = true;
-  }
-  
-  lastEncoded = encoded;
+if (abs(pulseCounter) >= 4)
+{
+if (pulseCounter > 0) rf_freq_hz += 1000L;
+else rf_freq_hz -= 1000L;
+
+rf_freq_hz = constrain(rf_freq_hz, 7000000L, 7300000L);
+pulseCounter = 0;
+update_needed = true;
+}
+
+lastEncoded = encoded;
 }
 
 void update_hardware() 
