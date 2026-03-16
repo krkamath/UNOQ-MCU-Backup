@@ -1,0 +1,12 @@
+profiles:
+  default:
+    fqbn: 
+    platforms:
+      - platform: arduino:zephyr
+    libraries:
+      - Etherkit Si5351 (2.2.0)
+      - Adafruit BusIO (1.17.4)
+      - Adafruit GFX Library (1.12.5)
+      - Adafruit SSD1306 (2.5.16)
+
+default_profile: default
