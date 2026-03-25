@@ -41,7 +41,7 @@ void setup()
     Serial.println("Si5351 not found – check I2C wiring.");
     while (1) { delay(1000); }
   }
-  si5351.drive_strength(SI5351_CLK0, SI5351_DRIVE_2MA); // low level change this later after check 
+  si5351.drive_strength(SI5351_CLK0, SI5351_DRIVE_2MA);  // lowest level, safer for VNA
   si5351.output_enable(SI5351_CLK0, 1);
 
   update_hardware();
